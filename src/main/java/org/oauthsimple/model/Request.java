@@ -19,7 +19,6 @@ import org.oauthsimple.utils.MimeUtils;
 import org.oauthsimple.utils.Utils;
 
 import com.squareup.mimecraft.FormEncoding;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.ParameterList;
 
 /**
  * Represents an HTTP Request object
