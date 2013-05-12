@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -14,7 +15,7 @@ import org.scribe.oauth.OAuthService;
 public class FlickrExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.flickr.com/services/rest/";
 
-	public static void main(String[] args) {
+	public static void main(String[] args)  throws IOException{
 		// Replace these with your own api key and secret
 		String apiKey = "your_app_id";
 		String apiSecret = "your_api_secret";
@@ -51,7 +52,7 @@ public class FlickrExample {
 		System.out.println("Now we're going to access a protected resource...");
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				PROTECTED_RESOURCE_URL);
-		request.addQuerystringParameter("method", "flickr.test.login");
+		request.addQueryStringParameter("method", "flickr.test.login");
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");

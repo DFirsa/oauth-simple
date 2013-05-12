@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -14,7 +15,7 @@ import org.scribe.oauth.OAuthService;
 public class XingExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.xing.com/v1/users/me";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder().provider(XingApi.class)
 				.apiKey("097ccfd3ef25a1cb6d75")
 				.apiSecret("e43364b2afd5d92f2ec28951a75bd8075f9cc221").build();

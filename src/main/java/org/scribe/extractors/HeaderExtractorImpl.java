@@ -1,9 +1,11 @@
 package org.scribe.extractors;
 
+import java.util.List;
 import java.util.Map;
 
 import org.scribe.exceptions.OAuthParametersMissingException;
 import org.scribe.model.OAuthRequest;
+import org.scribe.model.Parameter;
 import org.scribe.utils.OAuthEncoder;
 import org.scribe.utils.Preconditions;
 
@@ -23,16 +25,17 @@ public class HeaderExtractorImpl implements HeaderExtractor {
 	 */
 	public String extract(OAuthRequest request) {
 		checkPreconditions(request);
-		Map<String, String> parameters = request.getOauthParameters();
+		List<Parameter> parameters = request.getOauthParameters();
+		// Map<String, String> parameters = request.getOauthParameters();
 		StringBuilder header = new StringBuilder(parameters.size()
 				* ESTIMATED_PARAM_LENGTH);
 		header.append(PREAMBLE);
-		for (Map.Entry<String, String> entry : parameters.entrySet()) {
+		for (Parameter param : parameters) {
 			if (header.length() > PREAMBLE.length()) {
 				header.append(PARAM_SEPARATOR);
 			}
-			header.append(String.format("%s=\"%s\"", entry.getKey(),
-					OAuthEncoder.encode(entry.getValue())));
+			header.append(String.format("%s=\"%s\"", param.getName(),
+					OAuthEncoder.encode(param.getValue())));
 		}
 		return header.toString();
 	}

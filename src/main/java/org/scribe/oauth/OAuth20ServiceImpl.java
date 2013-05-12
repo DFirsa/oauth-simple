@@ -1,5 +1,6 @@
 package org.scribe.oauth;
 
+import java.io.IOException;
 import java.net.Proxy;
 
 import org.scribe.builder.api.DefaultApi20;
@@ -35,10 +36,15 @@ public class OAuth20ServiceImpl implements OAuthService {
 		this.config = config;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public OAuthToken getAccessToken(OAuthToken requestToken, Verifier verifier) {
+	@Override
+	public OAuthToken getAccessToken(String userName, String password)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public OAuthToken getAccessToken(OAuthToken requestToken, Verifier verifier)
+			throws IOException {
 		if (config.getResponseType() == ResponseType.TOKEN) {
 			return new OAuthToken(verifier.getValue(), "");
 		}
@@ -47,10 +53,10 @@ public class OAuth20ServiceImpl implements OAuthService {
 		GrantType type = config.getGrantType();
 
 		if (type == GrantType.AUTHORIZATION_CODE) {
-			request.addQuerystringParameter(OAuthConstants.CODE,
+			request.addQueryStringParameter(OAuthConstants.CODE,
 					verifier.getValue());
 		} else if (type == GrantType.REFRESH_TOKEN) {
-			request.addQuerystringParameter(OAuthConstants.REFRESH_TOKEN,
+			request.addQueryStringParameter(OAuthConstants.REFRESH_TOKEN,
 					verifier.getValue());
 		} else if (type == GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS) {
 			String resource = verifier.getValue();
@@ -60,23 +66,23 @@ public class OAuth20ServiceImpl implements OAuthService {
 				if (credentials != null && credentials.length == 2) {
 					String userName = credentials[0];
 					String password = credentials[1];
-					request.addQuerystringParameter(OAuthConstants.USERNAME,
+					request.addQueryStringParameter(OAuthConstants.USERNAME,
 							userName);
-					request.addQuerystringParameter(OAuthConstants.PASSWORD,
+					request.addQueryStringParameter(OAuthConstants.PASSWORD,
 							password);
 				}
 			}
 		}
-		request.addQuerystringParameter(OAuthConstants.CLIENT_ID,
+		request.addQueryStringParameter(OAuthConstants.CLIENT_ID,
 				config.getApiKey());
-		request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET,
+		request.addQueryStringParameter(OAuthConstants.CLIENT_SECRET,
 				config.getApiSecret());
-		request.addQuerystringParameter(OAuthConstants.REDIRECT_URI,
+		request.addQueryStringParameter(OAuthConstants.REDIRECT_URI,
 				config.getCallback());
-		request.addQuerystringParameter(OAuthConstants.GRANT_TYPE, config
+		request.addQueryStringParameter(OAuthConstants.GRANT_TYPE, config
 				.getGrantType().getTypeValue());
 		if (config.hasScope())
-			request.addQuerystringParameter(OAuthConstants.SCOPE,
+			request.addQueryStringParameter(OAuthConstants.SCOPE,
 					config.getScope());
 
 		config.log("setting proxy to " + proxy);
@@ -94,7 +100,7 @@ public class OAuth20ServiceImpl implements OAuthService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public OAuthToken getRequestToken() {
+	public OAuthToken getRequestToken() throws IOException {
 		throw new UnsupportedOperationException(
 				"Unsupported operation, please use 'getAuthorizationUrl' and redirect your users there");
 	}
@@ -128,7 +134,7 @@ public class OAuth20ServiceImpl implements OAuthService {
 								+ token.getToken());
 			case QUERY_STRING:
 				config.log("using Querystring signature");
-				request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN,
+				request.addQueryStringParameter(OAuthConstants.ACCESS_TOKEN,
 						token.getToken());
 				break;
 			default:

@@ -53,4 +53,9 @@ public class OAuthConstants {
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
 
+	// xauth
+	public static final String X_AUTH_USERNAME = "x_auth_username";
+	public static final String X_AUTH_PASSWORD = "x_auth_password";
+	public static final String X_AUTH_MODE = "x_auth_mode";
+
 }

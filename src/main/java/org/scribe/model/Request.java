@@ -1,18 +1,25 @@
 package org.scribe.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.scribe.exceptions.OAuthConnectionException;
 import org.scribe.exceptions.OAuthException;
+import org.scribe.utils.MimeUtils;
+import org.scribe.utils.Utils;
+
+import com.squareup.mimecraft.FormEncoding;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.ParameterList;
 
 /**
  * Represents an HTTP Request object
@@ -22,22 +29,17 @@ import org.scribe.exceptions.OAuthException;
 public class Request {
 	private static final String CONTENT_LENGTH = "Content-Length";
 	private static final String CONTENT_TYPE = "Content-Type";
-	private static RequestTuner NOOP = new RequestTuner() {
-		@Override
-		public void tune(Request _) {
-		}
-	};
 	public static final String DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
+	private static final String EMPTY_STRING = "";
 
-	private String url;
+	private final String url;
 	private Verb verb;
-	private ParameterList querystringParams;
-	private ParameterList bodyParams;
+	private List<Parameter> queryParams;
+	private List<Parameter> bodyParams;
 	private Map<String, String> headers;
-	private String payload = null;
+	private Map<String, File> streamParams;
 	private HttpURLConnection connection;
 	private String charset;
-	private byte[] bytePayload = null;
 	private boolean connectionKeepAlive = false;
 	private Long connectTimeout = null;
 	private Long readTimeout = null;
@@ -54,8 +56,9 @@ public class Request {
 	public Request(Verb verb, String url) {
 		this.verb = verb;
 		this.url = url;
-		this.querystringParams = new ParameterList();
-		this.bodyParams = new ParameterList();
+		this.queryParams = new ArrayList<Parameter>();
+		this.bodyParams = new ArrayList<Parameter>();
+		this.streamParams = new HashMap<String, File>();
 		this.headers = new HashMap<String, String>();
 	}
 
@@ -66,21 +69,14 @@ public class Request {
 	 * @throws RuntimeException
 	 *             if the connection cannot be created.
 	 */
-	public Response send(RequestTuner tuner) {
-		try {
-			createConnection();
-			return doSend(tuner);
-		} catch (Exception e) {
-			throw new OAuthConnectionException(e);
-		}
-	}
-
-	public Response send() {
-		return send(NOOP);
+	public Response send() throws IOException {
+		createConnection();
+		return doSend();
 	}
 
 	private void createConnection() throws IOException {
 		String completeUrl = getCompleteUrl();
+		System.out.println("complete url is " + completeUrl);
 		if (connection == null) {
 			System.setProperty("http.keepAlive", connectionKeepAlive ? "true"
 					: "false");
@@ -101,11 +97,19 @@ public class Request {
 	 * @return the complete url.
 	 */
 	public String getCompleteUrl() {
-		return querystringParams.appendTo(url);
+		return appendTo(url);
 	}
 
-	Response doSend(RequestTuner tuner) throws IOException {
+	private String appendTo(String url) {
+		return Utils.appQueryString(url, queryParams);
+	}
+
+	private Response doSend() throws IOException {
 		connection.setRequestMethod(this.verb.name());
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+		connection.setUseCaches(false);
+		connection.setDefaultUseCaches(false);
 		if (connectTimeout != null) {
 			connection.setConnectTimeout(connectTimeout.intValue());
 		}
@@ -113,27 +117,68 @@ public class Request {
 			connection.setReadTimeout(readTimeout.intValue());
 		}
 		addHeaders(connection);
-		if (verb.equals(Verb.PUT) || verb.equals(Verb.POST)) {
-			addBody(connection, getByteBodyContents());
+		if (Verb.POST.equals(this.verb) || Verb.PUT.equals(this.verb)) {
+			addBody(connection);
+
 		}
-		tuner.tune(this);
 		return new Response(connection);
 	}
 
-	void addHeaders(HttpURLConnection conn) {
+	private void addHeaders(HttpURLConnection conn) {
 		for (String key : headers.keySet())
 			conn.setRequestProperty(key, headers.get(key));
 	}
 
-	void addBody(HttpURLConnection conn, byte[] content) throws IOException {
-		conn.setRequestProperty(CONTENT_LENGTH, String.valueOf(content.length));
+	private void addBody(HttpURLConnection conn) throws IOException {
+		if (isMultipartContent()) {
+			addMultipartBody(conn);
+		} else {
+			addFormEncodedBody(conn);
+		}
+	}
 
-		// Set default content type if none is set.
+	private void addMultipartBody(HttpURLConnection conn) throws IOException {
+		String boundary = MultiPartOutputStream.createBoundary();
+		String contentType = MultiPartOutputStream.getContentType(boundary);
+		// 首先必须写入CONTENT_TYPE
+		conn.setRequestProperty(CONTENT_TYPE, contentType);
+		MultiPartOutputStream mos = new MultiPartOutputStream(
+				conn.getOutputStream(), boundary);
+		for (String key : streamParams.keySet()) {
+			File file = streamParams.get(key);
+			String mimeType = MimeUtils.getMimeTypeFromPath(file.getPath());
+			mos.writeFile(key, mimeType, file);
+			System.out.println("name=" + key + " file=" + file.getPath());
+		}
+		for (Parameter param : bodyParams) {
+			mos.writeField(param.getName(), param.getValue());
+		}
+		// 调用close是必须的，写入结束标志
+		mos.close();
+	}
+
+	private void addFormEncodedBody(HttpURLConnection conn) {
+		// 首先必须写入CONTENT_TYPE
 		if (conn.getRequestProperty(CONTENT_TYPE) == null) {
 			conn.setRequestProperty(CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
 		}
-		conn.setDoOutput(true);
-		conn.getOutputStream().write(content);
+		if (!bodyParams.isEmpty()) {
+			FormEncoding.Builder builder = new FormEncoding.Builder();
+			for (Parameter param : bodyParams) {
+				builder.add(param.getName(), param.getValue());
+			}
+			ByteArrayOutputStream bos = null;
+			try {
+				bos = new ByteArrayOutputStream();
+				builder.build().writeBodyTo(bos);
+				bos.writeTo(conn.getOutputStream());
+				bos.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				Utils.forceClose(bos);
+			}
+		}
 	}
 
 	/**
@@ -148,6 +193,10 @@ public class Request {
 		this.headers.put(key, value);
 	}
 
+	public void addStreamParamter(String key, File file) {
+		this.streamParams.put(key, file);
+	}
+
 	/**
 	 * Add a body Parameter (for POST/ PUT Requests)
 	 * 
@@ -157,7 +206,11 @@ public class Request {
 	 *            the parameter value
 	 */
 	public void addBodyParameter(String key, String value) {
-		this.bodyParams.add(key, value);
+		this.bodyParams.add(new Parameter(key, value));
+	}
+
+	public void addBodyParameter(Parameter param) {
+		this.bodyParams.add(param);
 	}
 
 	/**
@@ -168,32 +221,12 @@ public class Request {
 	 * @param value
 	 *            the parameter value
 	 */
-	public void addQuerystringParameter(String key, String value) {
-		this.querystringParams.add(key, value);
+	public void addQueryStringParameter(String key, String value) {
+		this.queryParams.add(new Parameter(key, value));
 	}
 
-	/**
-	 * Add body payload.
-	 * 
-	 * This method is used when the HTTP body is not a form-url-encoded string,
-	 * but another thing. Like for example XML.
-	 * 
-	 * Note: The contents are not part of the OAuth signature
-	 * 
-	 * @param payload
-	 *            the body of the request
-	 */
-	public void addPayload(String payload) {
-		this.payload = payload;
-	}
-
-	/**
-	 * Overloaded version for byte arrays
-	 * 
-	 * @param payload
-	 */
-	public void addPayload(byte[] payload) {
-		this.bytePayload = payload.clone();
+	public void addQueryStringParameter(Parameter param) {
+		this.queryParams.add(param);
 	}
 
 	/**
@@ -203,16 +236,11 @@ public class Request {
 	 * @throws OAuthException
 	 *             if the request URL is not valid.
 	 */
-	public ParameterList getQueryStringParams() {
-		try {
-			ParameterList result = new ParameterList();
-			String queryString = new URL(url).getQuery();
-			result.addQuerystring(queryString);
-			result.addAll(querystringParams);
-			return result;
-		} catch (MalformedURLException mue) {
-			throw new OAuthException("Malformed URL", mue);
-		}
+	public List<Parameter> getQueryStringParams() {
+		List<Parameter> params = new ArrayList<Parameter>();
+		params.addAll(queryParams);
+		Utils.extractQueryString(url, params);
+		return params;
 	}
 
 	/**
@@ -220,8 +248,16 @@ public class Request {
 	 * 
 	 * @return a {@link ParameterList}containing the body parameters.
 	 */
-	public ParameterList getBodyParams() {
+	public List<Parameter> getBodyParams() {
 		return bodyParams;
+	}
+
+	public boolean isMultipartContent() {
+		return !isFormEncodedContent();
+	}
+
+	public boolean isFormEncodedContent() {
+		return streamParams.isEmpty();
 	}
 
 	/**
@@ -253,21 +289,12 @@ public class Request {
 		try {
 			return new String(getByteBodyContents(), getCharset());
 		} catch (UnsupportedEncodingException uee) {
-			throw new OAuthException("Unsupported Charset: " + charset, uee);
+			throw new RuntimeException("Unsupported Charset: " + charset, uee);
 		}
 	}
 
 	byte[] getByteBodyContents() {
-		if (bytePayload != null)
-			return bytePayload;
-		String body = (payload != null) ? payload : bodyParams
-				.asFormUrlEncodedString();
-		try {
-			return body.getBytes(getCharset());
-		} catch (UnsupportedEncodingException uee) {
-			throw new OAuthException("Unsupported Charset: " + getCharset(),
-					uee);
-		}
+		return new byte[4096];
 	}
 
 	/**
@@ -276,7 +303,7 @@ public class Request {
 	 * @return the verb
 	 */
 	public Verb getVerb() {
-		return verb;
+		return this.verb;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -14,7 +15,7 @@ import org.scribe.oauth.OAuthService;
 public class YahooExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://social.yahooapis.com/v1/user/A6ROU63MXWDCW3Y5MGCYWVHDJI/profile/status?format=json";
 
-	public static void main(String[] args) {
+	public static void main(String[] args)  throws IOException{
 		OAuthService service = new ServiceBuilder()
 				.provider(YahooApi.class)
 				.apiKey("dj0yJmk9TXZDWVpNVVdGaVFmJmQ9WVdrOWMweHZXbkZLTkhVbWNHbzlNVEl5TWprd05qUTJNZy0tJnM9Y29uc3VtZXJzZWNyZXQmeD0wMw--")

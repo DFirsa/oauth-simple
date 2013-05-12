@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +26,7 @@ public class RenrenExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.renren.com/restserver.do";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your api key";
 		String apiSecret = "your api secret";
@@ -68,7 +69,7 @@ public class RenrenExample {
 
 		List<String> sigString = new ArrayList<String>(parameters.size() + 1);
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
-			request.addQuerystringParameter(entry.getKey(), entry.getValue());
+			request.addQueryStringParameter(entry.getKey(), entry.getValue());
 			sigString.add(String.format("%s=%s", entry.getKey(),
 					entry.getValue()));
 		}
@@ -81,7 +82,7 @@ public class RenrenExample {
 		}
 		b.append(apiSecret);
 		System.out.println("Sig string: " + b.toString());
-		request.addQuerystringParameter("sig", md5(b.toString()));
+		request.addQueryStringParameter("sig", md5(b.toString()));
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");

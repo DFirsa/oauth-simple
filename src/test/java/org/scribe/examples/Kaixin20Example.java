@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -16,7 +17,7 @@ public class Kaixin20Example {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.kaixin001.com/users/me.json";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your api key";
 		String apiSecret = "your api secret";

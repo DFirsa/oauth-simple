@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -20,7 +21,7 @@ public class VkontakteExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.vkontakte.ru/method/friends.get";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		final String clientId = "your app id";
 		final String apiSecret = "your api secret";

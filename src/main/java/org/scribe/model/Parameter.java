@@ -6,7 +6,6 @@ import org.scribe.utils.OAuthEncoder;
  * @author: Pablo Fernandez
  */
 public class Parameter implements Comparable<Parameter> {
-	private static final String UTF = "UTF8";
 
 	private final String key;
 	private final String value;
@@ -39,7 +38,25 @@ public class Parameter implements Comparable<Parameter> {
 
 	public int compareTo(Parameter parameter) {
 		int keyDiff = key.compareTo(parameter.key);
-
 		return keyDiff != 0 ? keyDiff : value.compareTo(parameter.value);
+	}
+
+	public String getName() {
+		return key;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Param [");
+		builder.append(key);
+		builder.append("=");
+		builder.append(value);
+		builder.append("]");
+		return builder.toString();
 	}
 }

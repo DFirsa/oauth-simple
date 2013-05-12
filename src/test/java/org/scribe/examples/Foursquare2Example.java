@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -15,7 +16,7 @@ public class Foursquare2Example {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.foursquare.com/v2/users/self/friends?oauth_token=";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args)  throws IOException{
 		// Replace these with your own api key and secret
 		String apiKey = "FEGFXJUFANVVDHVSNUAMUKTTXCP1AJQD53E33XKJ44YP1S4I";
 		String apiSecret = "AYWKUL5SWPNC0CTQ202QXRUG2NLZYXMRA34ZSDW4AUYBG2RC";

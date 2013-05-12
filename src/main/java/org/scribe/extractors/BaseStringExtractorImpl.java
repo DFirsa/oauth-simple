@@ -1,10 +1,15 @@
 package org.scribe.extractors;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.scribe.exceptions.OAuthParametersMissingException;
 import org.scribe.model.OAuthRequest;
-import org.scribe.model.ParameterList;
+import org.scribe.model.Parameter;
 import org.scribe.utils.OAuthEncoder;
 import org.scribe.utils.Preconditions;
+import org.scribe.utils.Utils;
 
 /**
  * Default implementation of {@link BaseStringExtractor}. Conforms to OAuth 1.0a
@@ -28,11 +33,14 @@ public class BaseStringExtractorImpl implements BaseStringExtractor {
 	}
 
 	private String getSortedAndEncodedParams(OAuthRequest request) {
-		ParameterList params = new ParameterList();
+		List<Parameter> params = new ArrayList<Parameter>();
+		if (request.isFormEncodedContent()) {
+			params.addAll(request.getBodyParams());
+		}
 		params.addAll(request.getQueryStringParams());
-		params.addAll(request.getBodyParams());
-		params.addAll(new ParameterList(request.getOauthParameters()));
-		return params.sort().asOauthBaseString();
+		params.addAll(request.getOauthParameters());
+		Collections.sort(params);
+		return OAuthEncoder.encode(Utils.asFormUrlEncodedString(params));
 	}
 
 	private void checkPreconditions(OAuthRequest request) {

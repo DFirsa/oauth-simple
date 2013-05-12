@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -14,7 +15,7 @@ import org.scribe.oauth.OAuthService;
 public class ImgUrExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.imgur.com/2/account.json";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret (you'll need an
 		// read/write api key)
 		String apiKey = "your_app_id";

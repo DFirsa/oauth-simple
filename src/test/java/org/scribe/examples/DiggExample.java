@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -15,7 +16,7 @@ public class DiggExample {
 	private static final String NETWORK_NAME = "Digg";
 	private static final String PROTECTED_RESOURCE_URL = "http://services.digg.com/2.0/comment.digg";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "myKey";
 		String apiSecret = "mySecret";

@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -14,7 +15,7 @@ import org.scribe.oauth.OAuthService;
 public class TwitterExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.twitter.com/1/statuses/update.json";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder().provider(TwitterApi.class)
 				.apiKey("6icbcAXyZx67r8uTAUM5Qw")
 				.apiSecret("SCCAdUUc6LXxiazxH3N0QfpNUvlUy84mZ2XZKiv39s")

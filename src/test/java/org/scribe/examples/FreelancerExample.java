@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -19,7 +20,7 @@ public class FreelancerExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.sandbox.freelancer.com/Job/getJobList.json";
 	private static final String SCOPE = "http://api.sandbox.freelancer.com";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder()
 				.provider(FreelancerApi.Sandbox.class)
 				.signatureType(SignatureType.QUERY_STRING)

@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -20,7 +21,7 @@ public class AWeberExample {
 	private static final String CONSUMER_KEY = "";
 	private static final String CONSUMER_SECRET = "";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder().provider(AWeberApi.class)
 				.apiKey(CONSUMER_KEY).apiSecret(CONSUMER_SECRET).build();
 

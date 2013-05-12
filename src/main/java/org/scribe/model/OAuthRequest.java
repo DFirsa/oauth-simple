@@ -1,6 +1,8 @@
 package org.scribe.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,6 +14,7 @@ import java.util.Map;
  */
 public class OAuthRequest extends Request {
 	private static final String OAUTH_PREFIX = "oauth_";
+	private static final String XAUTH_PREFIX = "x_auth_";
 	private Map<String, String> oauthParameters;
 
 	/**
@@ -43,12 +46,14 @@ public class OAuthRequest extends Request {
 	}
 
 	private String checkKey(String key) {
-		if (key.startsWith(OAUTH_PREFIX) || key.equals(OAuthConstants.SCOPE)) {
+		if (key.startsWith(OAUTH_PREFIX) || key.startsWith(XAUTH_PREFIX)
+				|| key.equals(OAuthConstants.SCOPE)) {
 			return key;
 		} else {
-			throw new IllegalArgumentException(String.format(
-					"OAuth parameters must either be '%s' or start with '%s'",
-					OAuthConstants.SCOPE, OAUTH_PREFIX));
+			throw new IllegalArgumentException(
+					String.format(
+							"OAuth parameters must either be '%s' or start with '%s' or start with '%s'",
+							OAuthConstants.SCOPE, OAUTH_PREFIX, XAUTH_PREFIX));
 		}
 	}
 
@@ -57,8 +62,12 @@ public class OAuthRequest extends Request {
 	 * 
 	 * @return parameters as map
 	 */
-	public Map<String, String> getOauthParameters() {
-		return oauthParameters;
+	public List<Parameter> getOauthParameters() {
+		List<Parameter> params = new ArrayList<Parameter>();
+		for (String key : oauthParameters.keySet()) {
+			params.add(new Parameter(key, oauthParameters.get(key)));
+		}
+		return params;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -14,7 +15,7 @@ import org.scribe.oauth.OAuthService;
 public class FoursquareExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.foursquare.com/v1/user";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder()
 				.provider(FoursquareApi.class)
 				.apiKey("FEGFXJUFANVVDHVSNUAMUKTTXCP1AJQD53E33XKJ44YP1S4I")

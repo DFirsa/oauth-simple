@@ -1,5 +1,6 @@
 package org.scribe.oauth;
 
+import java.io.IOException;
 import java.net.Proxy;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -9,11 +10,14 @@ import org.scribe.model.OAuthConfig;
 import org.scribe.model.OAuthConstants;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.OAuthToken;
+import org.scribe.model.Parameter;
 import org.scribe.model.Request;
 import org.scribe.model.RequestTuner;
 import org.scribe.model.Response;
+import org.scribe.model.Verb;
 import org.scribe.model.Verifier;
 import org.scribe.utils.MapUtils;
+import org.scribe.utils.Utils;
 
 /**
  * OAuth 1.0a implementation of {@link OAuthService}
@@ -43,15 +47,16 @@ public class OAuth10aServiceImpl implements OAuthService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public OAuthToken getRequestToken(int timeout, TimeUnit unit) {
+	public OAuthToken getRequestToken(int timeout, TimeUnit unit)
+			throws IOException {
 		return getRequestToken(new TimeoutTuner(timeout, unit));
 	}
 
-	public OAuthToken getRequestToken() {
+	public OAuthToken getRequestToken() throws IOException {
 		return getRequestToken(2, TimeUnit.SECONDS);
 	}
 
-	public OAuthToken getRequestToken(RequestTuner tuner) {
+	public OAuthToken getRequestToken(RequestTuner tuner) throws IOException {
 		config.log("obtaining request token from "
 				+ api.getRequestTokenEndpoint());
 		OAuthRequest request = new OAuthRequest(api.getRequestTokenVerb(),
@@ -67,11 +72,35 @@ public class OAuth10aServiceImpl implements OAuthService {
 			request.setProxy(proxy);
 		}
 		config.log("sending request...");
-		Response response = request.send(tuner);
+		Response response;
+		response = request.send();
 		String body = response.getBody();
 		config.log("response status code: " + response.getCode());
 		config.log("response body: " + body);
 		return api.getRequestTokenExtractor().extract(body);
+	}
+
+	private void addXAuthParams(OAuthRequest request, String userName,
+			String password) {
+		request.addOAuthParameter(OAuthConstants.X_AUTH_USERNAME, userName);
+		request.addOAuthParameter(OAuthConstants.X_AUTH_PASSWORD, password);
+		request.addOAuthParameter(OAuthConstants.X_AUTH_MODE, "client_auth");
+		request.addOAuthParameter(OAuthConstants.TIMESTAMP, api
+				.getTimestampService().getTimestampInSeconds());
+		request.addOAuthParameter(OAuthConstants.NONCE, api
+				.getTimestampService().getNonce());
+		request.addOAuthParameter(OAuthConstants.CONSUMER_KEY,
+				config.getApiKey());
+		request.addOAuthParameter(OAuthConstants.SIGN_METHOD, api
+				.getSignatureService().getSignatureMethod());
+		request.addOAuthParameter(OAuthConstants.VERSION, getVersion());
+		if (config.hasScope())
+			request.addOAuthParameter(OAuthConstants.SCOPE, config.getScope());
+		request.addOAuthParameter(OAuthConstants.SIGNATURE,
+				getSignature(request, null));
+
+		config.log("appended additional OAuth parameters: "
+				+ Utils.convertToString(request.getOauthParameters()));
 	}
 
 	private void addOAuthParams(OAuthRequest request, OAuthToken token) {
@@ -90,24 +119,46 @@ public class OAuth10aServiceImpl implements OAuthService {
 				getSignature(request, token));
 
 		config.log("appended additional OAuth parameters: "
-				+ MapUtils.toString(request.getOauthParameters()));
+				+ Utils.convertToString(request.getOauthParameters()));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
+	public OAuthToken getAccessToken(String userName, String password)
+			throws IOException {
+		config.log("obtaining access token use xauth from "
+				+ api.getAccessTokenEndpoint());
+		OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
+				api.getAccessTokenEndpoint());
+
+		config.log("setting userName to: " + userName + " and password to: "
+				+ password);
+		addXAuthParams(request, userName, password);
+		appendSignature(request);
+		config.log("setting proxy to " + proxy);
+		if (proxy != null) {
+			request.setProxy(proxy);
+		}
+		config.log("sending request...");
+		Response response = request.send();
+		String body = response.getBody();
+		config.log("response status code: " + response.getCode());
+		config.log("response body: " + body);
+		return api.getAccessTokenExtractor().extract(body);
+	}
+
 	public OAuthToken getAccessToken(OAuthToken requestToken,
-			Verifier verifier, int timeout, TimeUnit unit) {
+			Verifier verifier, int timeout, TimeUnit unit) throws IOException {
 		return getAccessToken(requestToken, verifier, new TimeoutTuner(timeout,
 				unit));
 	}
 
-	public OAuthToken getAccessToken(OAuthToken requestToken, Verifier verifier) {
+	public OAuthToken getAccessToken(OAuthToken requestToken, Verifier verifier)
+			throws IOException {
 		return getAccessToken(requestToken, verifier, 2, TimeUnit.SECONDS);
 	}
 
 	public OAuthToken getAccessToken(OAuthToken requestToken,
-			Verifier verifier, RequestTuner tuner) {
+			Verifier verifier, RequestTuner tuner) throws IOException {
 		config.log("obtaining access token from "
 				+ api.getAccessTokenEndpoint());
 		OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
@@ -124,7 +175,7 @@ public class OAuth10aServiceImpl implements OAuthService {
 			request.setProxy(proxy);
 		}
 		config.log("sending request...");
-		Response response = request.send(tuner);
+		Response response = request.send();
 		String body = response.getBody();
 		config.log("response status code: " + response.getCode());
 		config.log("response body: " + body);
@@ -163,8 +214,9 @@ public class OAuth10aServiceImpl implements OAuthService {
 	private String getSignature(OAuthRequest request, OAuthToken token) {
 		config.log("generating signature...");
 		String baseString = api.getBaseStringExtractor().extract(request);
-		String signature = api.getSignatureService().getSignature(baseString,
-				config.getApiSecret(), token.getSecret());
+		String signature = api.getSignatureService()
+				.getSignature(baseString, config.getApiSecret(),
+						token == null ? null : token.getSecret());
 
 		config.log("base string is: " + baseString);
 		config.log("signature is: " + signature);
@@ -175,15 +227,16 @@ public class OAuth10aServiceImpl implements OAuthService {
 		switch (config.getSignatureType()) {
 		case QUERY_STRING:
 			config.log("using Querystring signature");
-			for (Map.Entry<String, String> entry : request.getOauthParameters()
-					.entrySet()) {
-				request.addQuerystringParameter(entry.getKey(),
-						entry.getValue());
+			if (Verb.POST == request.getVerb() || Verb.PUT == request.getVerb()) {
+				for (Parameter param : request.getOauthParameters()) {
+					request.addBodyParameter(param);
+				}
+			} else {
+				for (Parameter param : request.getOauthParameters()) {
+					request.addQueryStringParameter(param);
+				}
 			}
 			break;
-		case HEADER_BEARER:
-		case HEADER_OAUTH:
-		case HEADER_MAC:
 		default:
 			config.log("using Http Header signature");
 			String oauthHeader = api.getHeaderExtractor().extract(request);
@@ -211,4 +264,5 @@ public class OAuth10aServiceImpl implements OAuthService {
 	public void setProxy(Proxy proxy) {
 		this.proxy = proxy;
 	}
+
 }

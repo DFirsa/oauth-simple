@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -16,7 +17,7 @@ public class ViadeoExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.viadeo.com/me?user_detail=full";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args)  throws IOException{
 		// Replace these with your own api key and secret
 		String apiKey = "your_app_id";
 		String apiSecret = "your_api_secret";

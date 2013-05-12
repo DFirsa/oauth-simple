@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -15,7 +16,7 @@ public class NeteaseWeiboExample {
 	private static final String NETWORK_NAME = "NetEase(163.com) Weibo";
 	private static final String PROTECTED_RESOURCE_URL = "http://api.t.163.com/account/verify_credentials.json";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your key";
 		String apiSecret = "your secret";

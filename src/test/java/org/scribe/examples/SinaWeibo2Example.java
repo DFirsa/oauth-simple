@@ -1,5 +1,6 @@
 package org.scribe.examples;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.scribe.builder.ServiceBuilder;
@@ -16,7 +17,7 @@ public class SinaWeibo2Example {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.weibo.com/2/account/get_uid.json";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your_api_key";
 		String apiSecret = "your_api_secret";
