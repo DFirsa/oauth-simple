@@ -15,7 +15,7 @@ import org.oauthsimple.oauth.OAuthService;
 public class SkyrockExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.skyrock.com/v2/user/get.json";
 
-	public static void main(String[] args)  throws IOException{
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder().provider(SkyrockApi.class)
 				.apiKey("your-api-key").apiSecret("your-api-secret").build();
 		Scanner in = new Scanner(System.in);

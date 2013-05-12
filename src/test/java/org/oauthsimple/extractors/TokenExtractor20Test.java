@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.oauthsimple.exceptions.OAuthException;
-import org.oauthsimple.extractors.TokenExtractor20Impl;
 import org.oauthsimple.model.OAuthToken;
 
 public class TokenExtractor20Test {

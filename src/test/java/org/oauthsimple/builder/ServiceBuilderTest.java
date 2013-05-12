@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.Api;
 import org.oauthsimple.model.GrantType;
 import org.oauthsimple.model.OAuthConfig;

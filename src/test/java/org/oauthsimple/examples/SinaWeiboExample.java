@@ -16,7 +16,7 @@ public class SinaWeiboExample {
 	private static final String NETWORK_NAME = "SinaWeibo";
 	private static final String PROTECTED_RESOURCE_URL = "http://api.t.sina.com.cn/account/verify_credentials.json";
 
-	public static void main(String[] args)  throws IOException{
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your key";
 		String apiSecret = "your secret";

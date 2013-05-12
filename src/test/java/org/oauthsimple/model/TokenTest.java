@@ -4,7 +4,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
 
 import org.junit.Test;
-import org.oauthsimple.model.OAuthToken;
 
 public class TokenTest {
 	@Test

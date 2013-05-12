@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.oauthsimple.utils.StreamUtils;
 
 public class StreamUtilsTest {
 

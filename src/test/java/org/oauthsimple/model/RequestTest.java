@@ -8,9 +8,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oauthsimple.model.Parameter;
-import org.oauthsimple.model.Request;
-import org.oauthsimple.model.Verb;
 
 public class RequestTest {
 	private Request getRequest;
@@ -74,10 +71,10 @@ public class RequestTest {
 
 	@Test
 	public void shouldSetPayloadAndHeaders() {
-//		postRequest.addPayload("PAYLOAD");
-//		postRequest.send();
-//		assertEquals("PAYLOAD", postRequest.getBodyContents());
-//		assertTrue(connection.getHeaders().containsKey("Content-Length"));
+		// postRequest.addPayload("PAYLOAD");
+		// postRequest.send();
+		// assertEquals("PAYLOAD", postRequest.getBodyContents());
+		// assertTrue(connection.getHeaders().containsKey("Content-Length"));
 	}
 
 	@Test
@@ -105,18 +102,18 @@ public class RequestTest {
 
 	@Test
 	public void shouldAutomaticallyAddContentTypeForPostRequestsWithBytePayload() {
-//		postRequest.addPayload("PAYLOAD".getBytes());
-//		postRequest.send();
-//		assertEquals(Request.DEFAULT_CONTENT_TYPE,
-//				connection.getHeaders().get("Content-Type"));
+		// postRequest.addPayload("PAYLOAD".getBytes());
+		// postRequest.send();
+		// assertEquals(Request.DEFAULT_CONTENT_TYPE,
+		// connection.getHeaders().get("Content-Type"));
 	}
 
 	@Test
 	public void shouldAutomaticallyAddContentTypeForPostRequestsWithStringPayload() {
-//		postRequest.addPayload("PAYLOAD");
-//		postRequest.send();
-//		assertEquals(Request.DEFAULT_CONTENT_TYPE,
-//				connection.getHeaders().get("Content-Type"));
+		// postRequest.addPayload("PAYLOAD");
+		// postRequest.send();
+		// assertEquals(Request.DEFAULT_CONTENT_TYPE,
+		// connection.getHeaders().get("Content-Type"));
 	}
 
 	@Test

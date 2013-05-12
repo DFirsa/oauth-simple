@@ -9,7 +9,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
-import org.oauthsimple.services.RSASha1SignatureService;
 
 public class RSASha1SignatureServiceTest {
 

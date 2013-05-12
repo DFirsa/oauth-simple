@@ -1,7 +1,6 @@
 package org.oauthsimple.utils;
 
 import org.junit.Test;
-import org.oauthsimple.utils.Preconditions;
 
 public class PreconditionsTest {
 

@@ -3,7 +3,6 @@ package org.oauthsimple.extractors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.oauthsimple.extractors.JsonTokenExtractor;
 import org.oauthsimple.model.OAuthToken;
 
 public class JsonTokenExtractorTest {

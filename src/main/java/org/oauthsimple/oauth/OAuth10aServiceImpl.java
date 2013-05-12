@@ -2,7 +2,6 @@ package org.oauthsimple.oauth;
 
 import java.io.IOException;
 import java.net.Proxy;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.oauthsimple.builder.api.DefaultApi10a;
@@ -16,7 +15,6 @@ import org.oauthsimple.model.RequestTuner;
 import org.oauthsimple.model.Response;
 import org.oauthsimple.model.Verb;
 import org.oauthsimple.model.Verifier;
-import org.oauthsimple.utils.MapUtils;
 import org.oauthsimple.utils.Utils;
 
 /**

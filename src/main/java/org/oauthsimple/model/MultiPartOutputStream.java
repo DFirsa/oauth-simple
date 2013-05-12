@@ -1,7 +1,13 @@
 package org.oauthsimple.model;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * <code>MultiPartFormOutputStream</code> is used to write "multipart/form-data"

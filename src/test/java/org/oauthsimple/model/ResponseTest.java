@@ -8,7 +8,6 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oauthsimple.model.Response;
 
 public class ResponseTest {
 

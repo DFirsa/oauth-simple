@@ -16,7 +16,7 @@ public class LiveExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.foursquare.com/v2/users/self/friends?oauth_token=";
 	private static final OAuthToken EMPTY_TOKEN = null;
 
-	public static void main(String[] args)  throws IOException{
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "";
 		String apiSecret = "";

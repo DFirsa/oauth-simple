@@ -15,7 +15,7 @@ import org.oauthsimple.oauth.OAuthService;
 public class FlickrExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.flickr.com/services/rest/";
 
-	public static void main(String[] args)  throws IOException{
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your_app_id";
 		String apiSecret = "your_api_secret";

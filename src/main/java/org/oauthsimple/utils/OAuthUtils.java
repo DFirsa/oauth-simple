@@ -14,10 +14,10 @@ public final class OAuthUtils {
 	private static final String HMAC_SHA1 = "HmacSHA1";
 	private static final String OAUTH_BASE_STRING_FORMAT = "%s&%s&%s";
 	private static final String EMPTY_STRING = "";
-//	private static final String PARAM_SEPARATOR = ", ";
+	// private static final String PARAM_SEPARATOR = ", ";
 	private static final String PREAMBLE = "OAuth ";
 	private static final String CARRIAGE_RETURN = "\r\n";
-	private static final Random RAND=new Random();
+	private static final Random RAND = new Random();
 
 	// static String generateXAuthHeader(String userName, String password,
 	// OAuthProvider provider) {

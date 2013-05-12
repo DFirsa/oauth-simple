@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.oauthsimple.utils.MapUtils;
 
 /**
  * @author: Pablo Fernandez

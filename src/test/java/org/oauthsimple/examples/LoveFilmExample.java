@@ -16,7 +16,7 @@ public class LoveFilmExample {
 	private static final String NETWORK_NAME = "LoveFilm";
 	private static final String PROTECTED_RESOURCE_URL = "https://api.lovefilm.com/users";
 
-	public static void main(String[] args)  throws IOException{
+	public static void main(String[] args) throws IOException {
 		// Replace these with your own api key and secret
 		String apiKey = "your_key";
 		String apiSecret = "your_secret";

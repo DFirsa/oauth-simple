@@ -17,7 +17,7 @@ public class TrelloExample {
 	private static final String API_SECRET = "your_api_secret";
 	private static final String PROTECTED_RESOURCE_URL = "https://trello.com/1/members/me";
 
-	public static void main(String[] args)  throws IOException{
+	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder().provider(TrelloApi.class)
 				.apiKey(API_KEY).apiSecret(API_SECRET).build();
 		Scanner in = new Scanner(System.in);

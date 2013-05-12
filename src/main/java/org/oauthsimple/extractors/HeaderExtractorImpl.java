@@ -1,7 +1,6 @@
 package org.oauthsimple.extractors;
 
 import java.util.List;
-import java.util.Map;
 
 import org.oauthsimple.exceptions.OAuthParametersMissingException;
 import org.oauthsimple.model.OAuthRequest;
