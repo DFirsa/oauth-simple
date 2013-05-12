@@ -96,3 +96,15 @@
 [1.3.3]
   * FEATURE: accessToken and requestToken timeouts default to 2 seconds and can be specified.
   * FEATURE: New Apis.
+
+[2.0.0]
+  * FEATURE: a refactoring version of old scribe, rename to OAuth Simple.
+  * FEATURE: add all signature style support for oauth 2.0.
+  * FEATURE: add all grant type support for oauth 2.0.
+  * FEATURE: add username/password and refresh token support for oauth 2.0.
+  * FEATURE: use new OAuthToken class, add more must be fileds.
+  * FEATURE: add xauth support for oauth 1.0.
+  * FEATURE: add http proxy support for request.
+  * FEATURE: add real and easy to use multipart support for request.
+  * FEATURE: refactoring request, make it easy to use.
+  * FIX: fix most bugs for oauth and request.

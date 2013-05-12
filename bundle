@@ -1,2 +1,2 @@
 #!/bin/sh
-mvn source:jar javadoc:jar package gpg:sign repository:bundle-create -Dgpg.passphrase=$1
+mvn source:jar javadoc:jar package repository:bundle-create
