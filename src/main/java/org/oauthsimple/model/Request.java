@@ -106,7 +106,6 @@ public class Request {
 	private Response doSend() throws IOException {
 		connection.setRequestMethod(this.verb.name());
 		connection.setDoInput(true);
-		connection.setDoOutput(true);
 		connection.setUseCaches(false);
 		connection.setDefaultUseCaches(false);
 		if (connectTimeout != null) {
@@ -117,8 +116,10 @@ public class Request {
 		}
 		addHeaders(connection);
 		if (Verb.POST.equals(this.verb) || Verb.PUT.equals(this.verb)) {
+			connection.setDoOutput(true);
 			addBody(connection);
-
+		} else {
+			connection.setDoOutput(false);
 		}
 		return new Response(connection);
 	}
@@ -212,6 +213,12 @@ public class Request {
 		this.bodyParams.add(param);
 	}
 
+	public void addBodyParameters(Map<String, String> params) {
+		for (String key : params.keySet()) {
+			this.bodyParams.add(new Parameter(key, params.get(key)));
+		}
+	}
+
 	/**
 	 * Add a QueryString parameter
 	 * 
@@ -226,6 +233,12 @@ public class Request {
 
 	public void addQueryStringParameter(Parameter param) {
 		this.queryParams.add(param);
+	}
+
+	public void addQueryStringParameters(Map<String, String> params) {
+		for (String key : params.keySet()) {
+			this.queryParams.add(new Parameter(key, params.get(key)));
+		}
 	}
 
 	/**

@@ -20,7 +20,7 @@ import org.oauthsimple.oauth.OAuthService;
 
 public class FanfouExample {
 	private static final String UPLOAD_URL = "http://api.fanfou.com/photos/upload.json";
-	private static final String UPDATE_URL = "http://api.fanfou.com/photos/upload.json";
+	private static final String USER_URL = "http://api.fanfou.com/statuses/home_timeline.json";
 
 	public static void main(String[] args) throws IOException {
 		OAuthService service = new ServiceBuilder().debug()
@@ -87,16 +87,24 @@ public class FanfouExample {
 
 		// Now let's go and ask for a protected resource!
 		System.out.println("Now we're going to access a protected resource...");
-		OAuthRequest request = new OAuthRequest(Verb.POST, UPLOAD_URL);
-		request.addBodyParameter("status",
-				"this is sparta! *" + System.currentTimeMillis());
-		request.addQueryStringParameter("a", "b");
-		request.addStreamParamter("photo", new File("login.png"));
+//		OAuthRequest request = new OAuthRequest(Verb.POST, UPLOAD_URL);
+//		request.addBodyParameter("status",
+//				"this is sparta! *" + System.currentTimeMillis());
+//		request.addQueryStringParameter("a", "b");
+//		request.addStreamParamter("photo", new File("login.png"));
+//		service.signRequest(accessToken, request);
+		
+		OAuthRequest request=new OAuthRequest(Verb.GET, USER_URL);
+		request.addQueryStringParameter("count", "2");
+		request.addQueryStringParameter("mode", "lite");
+		request.addQueryStringParameter("format", "html");
 		service.signRequest(accessToken, request);
+		
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");
 		System.out.println();
 		System.out.println(response.getBody());
+
 
 		System.out.println();
 		System.out
