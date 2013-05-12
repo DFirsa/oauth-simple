@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.oauthsimple.exceptions.OAuthException;
@@ -16,20 +15,22 @@ import org.oauthsimple.utils.StreamUtils;
  * @author Pablo Fernandez
  */
 public class Response {
-	private static final String EMPTY = "";
-
 	private int code;
 	private String message;
 	private String body;
+	private int contentLength;
+	private String contentType;
 	private InputStream stream;
-	private Map<String, String> headers;
+	private Headers headers;
 
 	Response(HttpURLConnection connection) throws IOException {
 		try {
 			connection.connect();
 			code = connection.getResponseCode();
 			message = connection.getResponseMessage();
-			headers = parseHeaders(connection);
+			contentLength = connection.getContentLength();
+			contentType = connection.getContentType();
+			headers = new Headers(connection.getHeaderFields());
 			stream = isSuccessful() ? connection.getInputStream() : connection
 					.getErrorStream();
 		} catch (UnknownHostException e) {
@@ -39,16 +40,8 @@ public class Response {
 	}
 
 	private String parseBodyContents() {
-		body = StreamUtils.getStreamContents(getStream());
+		body = StreamUtils.getStreamContents(getInputStream());
 		return body;
-	}
-
-	private Map<String, String> parseHeaders(HttpURLConnection conn) {
-		Map<String, String> headers = new HashMap<String, String>();
-		for (String key : conn.getHeaderFields().keySet()) {
-			headers.put(key, conn.getHeaderFields().get(key).get(0));
-		}
-		return headers;
 	}
 
 	public boolean isSuccessful() {
@@ -70,7 +63,7 @@ public class Response {
 	 * 
 	 * @return input stream / error stream
 	 */
-	public InputStream getStream() {
+	public InputStream getInputStream() {
 		return stream;
 	}
 
@@ -93,12 +86,20 @@ public class Response {
 		return message;
 	}
 
+	public int getContentLength() {
+		return contentLength;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
 	/**
 	 * Obtains a {@link Map} containing the HTTP Response Headers
 	 * 
 	 * @return headers
 	 */
-	public Map<String, String> getHeaders() {
+	public Headers getHeaders() {
 		return headers;
 	}
 
@@ -111,7 +112,7 @@ public class Response {
 	 * @return header value or null.
 	 */
 	public String getHeader(String name) {
-		return headers.get(name);
+		return headers.getHeader(name);
 	}
 
 }
