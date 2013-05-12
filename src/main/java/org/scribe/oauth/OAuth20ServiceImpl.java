@@ -39,12 +39,12 @@ public class OAuth20ServiceImpl implements OAuthService {
 	@Override
 	public OAuthToken getAccessToken(String userName, String password)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return getAccessToken(null, userName + CREDENTIALS_SEPARATOR + password);
 	}
 
 	public OAuthToken getAccessToken(OAuthToken requestToken, Verifier verifier)
 			throws IOException {
+		config.log("get access token , verifier is  " + verifier);
 		if (config.getResponseType() == ResponseType.TOKEN) {
 			return new OAuthToken(verifier.getValue(), "");
 		}
@@ -52,6 +52,10 @@ public class OAuth20ServiceImpl implements OAuthService {
 				api.getAccessTokenEndpoint(config));
 		GrantType type = config.getGrantType();
 
+		// verifier对于不同的GRANT_TYPE有不同的含义
+		// 1. authorize_code
+		// 2. refresh token
+		// 3. username+password
 		if (type == GrantType.AUTHORIZATION_CODE) {
 			request.addQueryStringParameter(OAuthConstants.CODE,
 					verifier.getValue());
