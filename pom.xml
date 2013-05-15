@@ -48,9 +48,9 @@
   </licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com/mcxiaoke/oauth-simple.git</connection>
-		<developerConnection>scm:git:git://github.com/mcxiaoke/oauth-simple.git</developerConnection>
 		<url>https://github.com/mcxiaoke/oauth-simple.git</url>
+		<connection>scm:git:https://github.com:mcxiaoke/oauth-simple.git</connection>
+		<developerConnection>scm:git:git@github.com:mcxiaoke/oauth-simple.git</developerConnection>
 	  <tag>oauthsimple-2.0.0</tag>
   </scm>
 
