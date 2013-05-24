@@ -53,7 +53,7 @@ class SimpleMultipart {
         isSetFirst = true;
     }
 
-    public void writeBoundary() {
+    private void writeBoundary() {
         try {
             out.write(("--" + boundary + "\r\n").getBytes());
         } catch (final IOException e) {
@@ -61,7 +61,7 @@ class SimpleMultipart {
         }
     }
 
-    public void writeLastBoundaryIfNeeds() {
+    private void writeLastBoundaryIfNeeds() {
         if (isSetLast) {
             return;
         }
@@ -76,6 +76,11 @@ class SimpleMultipart {
         isSetLast = true;
     }
 
+
+    public void addPart(final String key, final String value) {
+        addPart(key, value, "text/plain; charset=UTF-8");
+    }
+
     public void addPart(final String key, final String value, final String contentType) {
         writeBoundary();
         try {
@@ -88,20 +93,21 @@ class SimpleMultipart {
         }
     }
 
-    public void addPart(final String key, final String value) {
-        addPart(key, value, "text/plain; charset=UTF-8");
+
+    public void addPart(final String key, final File value, final String contentType) {
+        try {
+            addPart(key, value.getName(), new FileInputStream(value), contentType);
+        } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void addPart(final String key, final String fileName, final InputStream fin, final boolean isLast) {
-        addPart(key, fileName, fin, "application/octet-stream", isLast);
-    }
-
-    public void addPart(final String key, final String fileName, final InputStream fin, String type, final boolean isLast) {
+    public void addPart(final String key, final String fileName, final InputStream fin, String contentType) {
         writeBoundary();
         try {
-            type = "Content-Type: " + type + "\r\n";
+            contentType = "Content-Type: " + contentType + "\r\n";
             out.write(("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n").getBytes());
-            out.write(type.getBytes());
+            out.write(contentType.getBytes());
             out.write("Content-Transfer-Encoding: binary\r\n\r\n".getBytes());
 
             final byte[] tmp = new byte[4096];
@@ -119,14 +125,6 @@ class SimpleMultipart {
             } catch (final IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void addPart(final String key, final File value, final boolean isLast) {
-        try {
-            addPart(key, value.getName(), new FileInputStream(value), isLast);
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
