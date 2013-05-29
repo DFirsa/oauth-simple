@@ -1,16 +1,12 @@
 package org.oauthsimple.examples;
 
-import java.io.IOException;
-import java.util.Scanner;
-
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.TwitterApi;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Response;
-import org.oauthsimple.model.Verb;
-import org.oauthsimple.model.Verifier;
+import org.oauthsimple.model.*;
 import org.oauthsimple.oauth.OAuthService;
+
+import java.io.IOException;
+import java.util.Scanner;
 
 public class TwitterExample {
 	private static final String PROTECTED_RESOURCE_URL = "https://api.twitter.com/1/statuses/update.json";
@@ -50,7 +46,7 @@ public class TwitterExample {
 		System.out.println("Now we're going to access a protected resource...");
 		OAuthRequest request = new OAuthRequest(Verb.POST,
 				PROTECTED_RESOURCE_URL);
-		request.addBodyParameter("status", "this is sparta! *");
+		request.addParameter("status", "this is sparta! *");
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");

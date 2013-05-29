@@ -1,15 +1,15 @@
 package org.oauthsimple.extractors;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.oauthsimple.exceptions.OAuthParametersMissingException;
 import org.oauthsimple.model.OAuthRequest;
 import org.oauthsimple.model.Parameter;
 import org.oauthsimple.utils.OAuthEncoder;
 import org.oauthsimple.utils.Preconditions;
 import org.oauthsimple.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Default implementation of {@link BaseStringExtractor}. Conforms to OAuth 1.0a
@@ -34,10 +34,9 @@ public class BaseStringExtractorImpl implements BaseStringExtractor {
 
 	private String getSortedAndEncodedParams(OAuthRequest request) {
 		List<Parameter> params = new ArrayList<Parameter>();
-		if (request.isFormEncodedContent()) {
-			params.addAll(request.getBodyParams());
-		}
-		params.addAll(request.getQueryStringParams());
+//		if (request.isFormEncodedContent()) {
+			params.addAll(request.getParameters());
+//		}
 		params.addAll(request.getOauthParameters());
 		Collections.sort(params);
 		return OAuthEncoder.encode(Utils.asFormUrlEncodedString(params));

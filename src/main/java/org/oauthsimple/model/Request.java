@@ -2,13 +2,9 @@ package org.oauthsimple.model;
 
 import com.squareup.mimecraft.FormEncoding;
 import org.oauthsimple.exceptions.OAuthException;
-import org.oauthsimple.utils.MimeUtils;
 import org.oauthsimple.utils.Utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -30,17 +26,22 @@ public class Request {
     public static final String DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
     private static final String EMPTY_STRING = "";
 
-    private final String url;
+    private static final String ENCODING_DEFAULT = "UTF-8";
+
+    private static final int CONNECT_TIMEOUT = 10 * 1000;
+    private static final int READ_TIMEOUT = 10 * 1000;
+
+    private final String originalUrl;
+    private String url;
     private Verb verb;
-    private List<Parameter> queryParams;
-    private List<Parameter> bodyParams;
+    private List<Parameter> params;
     private Map<String, String> headers;
-    private Map<String, File> streamParams;
+    private Map<String, FileBody> bodys;
     private HttpURLConnection connection;
     private String charset;
-    private boolean connectionKeepAlive = false;
-    private Long connectTimeout = null;
-    private Long readTimeout = null;
+    private boolean keepAlive;
+    private long connectTimeout;
+    private long readTimeout;
     private Proxy proxy;
 
     /**
@@ -51,11 +52,16 @@ public class Request {
      */
     public Request(Verb verb, String url) {
         this.verb = verb;
-        this.url = url;
-        this.queryParams = new ArrayList<Parameter>();
-        this.bodyParams = new ArrayList<Parameter>();
-        this.streamParams = new HashMap<String, File>();
+        this.originalUrl = url;
+        this.params = new ArrayList<Parameter>();
+        this.bodys = new HashMap<String, FileBody>();
         this.headers = new HashMap<String, String>();
+        this.charset = ENCODING_DEFAULT;
+        this.keepAlive = false;
+        this.connectTimeout = CONNECT_TIMEOUT;
+        this.readTimeout = READ_TIMEOUT;
+        this.proxy = null;
+        this.url = Utils.extractQueryString(originalUrl, this.params);
     }
 
     /**
@@ -73,7 +79,7 @@ public class Request {
         String completeUrl = getCompleteUrl();
         System.out.println("complete url is " + completeUrl);
         if (connection == null) {
-            System.setProperty("http.keepAlive", connectionKeepAlive ? "true"
+            System.setProperty("http.keepAlive", keepAlive ? "true"
                     : "false");
             if (proxy != null) {
                 connection = (HttpURLConnection) new URL(completeUrl)
@@ -96,7 +102,7 @@ public class Request {
     }
 
     private String appendTo(String url) {
-        return Utils.appQueryString(url, queryParams);
+        return Utils.appQueryString(url, params);
     }
 
     private Response doSend() throws IOException {
@@ -104,12 +110,8 @@ public class Request {
         connection.setDoInput(true);
         connection.setUseCaches(false);
         connection.setDefaultUseCaches(false);
-        if (connectTimeout != null) {
-            connection.setConnectTimeout(connectTimeout.intValue());
-        }
-        if (readTimeout != null) {
-            connection.setReadTimeout(readTimeout.intValue());
-        }
+        connection.setConnectTimeout((int) connectTimeout);
+        connection.setReadTimeout((int) readTimeout);
         addHeaders(connection);
         if (Verb.POST.equals(this.verb) || Verb.PUT.equals(this.verb)) {
             connection.setDoOutput(true);
@@ -117,6 +119,12 @@ public class Request {
         } else {
             connection.setDoOutput(false);
         }
+
+        System.out.println("doSend() verb=" + verb);
+        System.out.println("doSend() originalUrl=" + originalUrl);
+        System.out.println("doSend() url=" + url);
+        System.out.println("doSend() params=" + params);
+
         return new Response(connection);
     }
 
@@ -136,13 +144,12 @@ public class Request {
     private void addMultipartBody(HttpURLConnection conn) throws IOException {
         // 首先必须写入CONTENT_TYPE
         SimpleMultipart multipart = new SimpleMultipart();
-        for (String key : streamParams.keySet()) {
-            File file = streamParams.get(key);
-            String mimeType = MimeUtils.getMimeTypeFromPath(file.getPath());
-            multipart.addPart(key, file, mimeType);
-            System.out.println("name=" + key + " file=" + file.getPath());
+        for (String key : bodys.keySet()) {
+            FileBody fileBody = bodys.get(key);
+            multipart.addPart(key, fileBody.fileName, fileBody.inputStream, fileBody.contentType);
+            System.out.println("name=" + key + " fileBody=" + fileBody);
         }
-        for (Parameter param : bodyParams) {
+        for (Parameter param : params) {
             multipart.addPart(param.getName(), param.getValue());
         }
         conn.setRequestProperty(CONTENT_TYPE, multipart.getContentType());
@@ -154,9 +161,9 @@ public class Request {
         if (conn.getRequestProperty(CONTENT_TYPE) == null) {
             conn.setRequestProperty(CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
         }
-        if (!bodyParams.isEmpty()) {
+        if (!params.isEmpty()) {
             FormEncoding.Builder builder = new FormEncoding.Builder();
-            for (Parameter param : bodyParams) {
+            for (Parameter param : params) {
                 builder.add(param.getName(), param.getValue());
             }
             ByteArrayOutputStream bos = null;
@@ -183,61 +190,23 @@ public class Request {
         this.headers.put(key, value);
     }
 
-    public void addStreamParamter(String key, File file) {
-        this.streamParams.put(key, file);
+    public void addBody(String key, File file) throws FileNotFoundException {
+        FileBody fileBody = new FileBody(key, file);
+        this.bodys.put(key, fileBody);
     }
 
-    /**
-     * Add a body Parameter (for POST/ PUT Requests)
-     *
-     * @param key   the parameter name
-     * @param value the parameter value
-     */
-    public void addBodyParameter(String key, String value) {
-        this.bodyParams.add(new Parameter(key, value));
+    public void addParameter(String key, String value) {
+        this.params.add(new Parameter(key, value));
     }
 
-    public void addBodyParameter(Parameter param) {
-        this.bodyParams.add(param);
+    public void addParameter(Parameter param) {
+        this.params.add(param);
     }
 
-    public void addBodyParameters(Map<String, String> params) {
+    public void addParameters(Map<String, String> params) {
         for (String key : params.keySet()) {
-            this.bodyParams.add(new Parameter(key, params.get(key)));
+            this.params.add(new Parameter(key, params.get(key)));
         }
-    }
-
-    /**
-     * Add a QueryString parameter
-     *
-     * @param key   the parameter name
-     * @param value the parameter value
-     */
-    public void addQueryStringParameter(String key, String value) {
-        this.queryParams.add(new Parameter(key, value));
-    }
-
-    public void addQueryStringParameter(Parameter param) {
-        this.queryParams.add(param);
-    }
-
-    public void addQueryStringParameters(Map<String, String> params) {
-        for (String key : params.keySet()) {
-            this.queryParams.add(new Parameter(key, params.get(key)));
-        }
-    }
-
-    /**
-     * Get  the query string parameters.
-     *
-     * @return containing the query string parameters.
-     * @throws OAuthException if the request URL is not valid.
-     */
-    public List<Parameter> getQueryStringParams() {
-        List<Parameter> params = new ArrayList<Parameter>();
-        params.addAll(queryParams);
-        Utils.extractQueryString(url, params);
-        return params;
     }
 
     /**
@@ -245,8 +214,8 @@ public class Request {
      *
      * @return containing the body parameters.
      */
-    public List<Parameter> getBodyParams() {
-        return bodyParams;
+    public List<Parameter> getParameters() {
+        return params;
     }
 
     public boolean isMultipartContent() {
@@ -254,7 +223,7 @@ public class Request {
     }
 
     public boolean isFormEncodedContent() {
-        return streamParams.isEmpty();
+        return bodys.isEmpty();
     }
 
     /**
@@ -353,8 +322,8 @@ public class Request {
     /**
      * Sets whether the underlying Http Connection is persistent or not.
      */
-    public void setConnectionKeepAlive(boolean connectionKeepAlive) {
-        this.connectionKeepAlive = connectionKeepAlive;
+    public void setKeepAlive(boolean keepAlive) {
+        this.keepAlive = keepAlive;
     }
 
     /*
@@ -366,10 +335,6 @@ public class Request {
 
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
-    }
-
-    public Proxy getProxy() {
-        return this.proxy;
     }
 
     @Override

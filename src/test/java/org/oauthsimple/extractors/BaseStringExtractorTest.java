@@ -1,13 +1,13 @@
 package org.oauthsimple.extractors;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.oauthsimple.exceptions.OAuthParametersMissingException;
 import org.oauthsimple.model.OAuthRequest;
 import org.oauthsimple.model.Verb;
 import org.oauthsimple.test.helpers.ObjectMother;
+
+import static org.junit.Assert.assertEquals;
 
 public class BaseStringExtractorTest {
 
@@ -42,7 +42,7 @@ public class BaseStringExtractorTest {
 	@Test
 	public void shouldProperlyEncodeSpaces() {
 		String expected = "GET&http%3A%2F%2Fexample.com&body%3Dthis%2520param%2520has%2520whitespace%26oauth_callback%3Dhttp%253A%252F%252Fexample%252Fcallback%26oauth_consumer_key%3DAS%2523%2524%255E%252A%2540%2526%26oauth_signature%3DOAuth-Signature%26oauth_timestamp%3D123456";
-		request.addBodyParameter("body", "this param has whitespace");
+		request.addParameter("body", "this param has whitespace");
 		assertEquals(expected, extractor.extract(request));
 	}
 }

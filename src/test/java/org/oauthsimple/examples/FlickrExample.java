@@ -1,16 +1,12 @@
 package org.oauthsimple.examples;
 
-import java.io.IOException;
-import java.util.Scanner;
-
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.FlickrApi;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Response;
-import org.oauthsimple.model.Verb;
-import org.oauthsimple.model.Verifier;
+import org.oauthsimple.model.*;
 import org.oauthsimple.oauth.OAuthService;
+
+import java.io.IOException;
+import java.util.Scanner;
 
 public class FlickrExample {
 	private static final String PROTECTED_RESOURCE_URL = "http://api.flickr.com/services/rest/";
@@ -52,7 +48,7 @@ public class FlickrExample {
 		System.out.println("Now we're going to access a protected resource...");
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				PROTECTED_RESOURCE_URL);
-		request.addQueryStringParameter("method", "flickr.test.login");
+		request.addParameter("method", "flickr.test.login");
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");

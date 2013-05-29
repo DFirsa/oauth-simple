@@ -1,16 +1,12 @@
 package org.oauthsimple.examples;
 
-import java.io.IOException;
-import java.util.Scanner;
-
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.DiggApi;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Response;
-import org.oauthsimple.model.Verb;
-import org.oauthsimple.model.Verifier;
+import org.oauthsimple.model.*;
 import org.oauthsimple.oauth.OAuthService;
+
+import java.io.IOException;
+import java.util.Scanner;
 
 public class DiggExample {
 	private static final String NETWORK_NAME = "Digg";
@@ -56,7 +52,7 @@ public class DiggExample {
 		System.out.println("Now we're going to access a protected resource...");
 		OAuthRequest request = new OAuthRequest(Verb.POST,
 				PROTECTED_RESOURCE_URL);
-		request.addBodyParameter("comment_id",
+		request.addParameter("comment_id",
 				"20100729223726:4fef610331ee46a3b5cbd740bf71313e");
 		service.signRequest(accessToken, request);
 		Response response = request.send();

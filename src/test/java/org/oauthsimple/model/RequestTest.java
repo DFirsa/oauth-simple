@@ -1,13 +1,11 @@
 package org.oauthsimple.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RequestTest {
 	private Request getRequest;
@@ -18,8 +16,8 @@ public class RequestTest {
 	public void setup() throws Exception {
 		connection = new ConnectionStub();
 		postRequest = new Request(Verb.POST, "http://example.com");
-		postRequest.addBodyParameter("param", "value");
-		postRequest.addBodyParameter("param with spaces", "value with spaces");
+		postRequest.addParameter("param", "value");
+		postRequest.addParameter("param with spaces", "value with spaces");
 		postRequest.setConnection(connection);
 		getRequest = new Request(Verb.GET,
 				"http://example.com?qsparam=value&other+param=value+with+spaces");
@@ -38,9 +36,9 @@ public class RequestTest {
 
 	@Test
 	public void shouldGetQueryStringParameters() {
-		assertEquals(2, getRequest.getQueryStringParams().size());
-		assertEquals(0, postRequest.getQueryStringParams().size());
-		assertTrue(getRequest.getQueryStringParams().contains(
+		assertEquals(2, getRequest.getParameters().size());
+		assertEquals(0, postRequest.getParameters().size());
+		assertTrue(getRequest.getParameters().contains(
 				new Parameter("qsparam", "value")));
 	}
 
@@ -80,23 +78,23 @@ public class RequestTest {
 	@Test
 	public void shouldAllowAddingQuerystringParametersAfterCreation() {
 		Request request = new Request(Verb.GET, "http://example.com?one=val");
-		request.addQueryStringParameter("two", "other val");
-		request.addQueryStringParameter("more", "params");
-		assertEquals(3, request.getQueryStringParams().size());
+		request.addParameter("two", "other val");
+		request.addParameter("more", "params");
+		assertEquals(3, request.getParameters().size());
 	}
 
 	@Test
 	public void shouldReturnTheCompleteUrl() {
 		Request request = new Request(Verb.GET, "http://example.com?one=val");
-		request.addQueryStringParameter("two", "other val");
-		request.addQueryStringParameter("more", "params");
+		request.addParameter("two", "other val");
+		request.addParameter("more", "params");
 		assertEquals("http://example.com?one=val&two=other%20val&more=params",
 				request.getCompleteUrl());
 	}
 
 	@Test
 	public void shouldHandleQueryStringSpaceEncodingProperly() {
-		assertTrue(getRequest.getQueryStringParams().contains(
+		assertTrue(getRequest.getParameters().contains(
 				new Parameter("other param", "value with spaces")));
 	}
 

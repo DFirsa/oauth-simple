@@ -1,18 +1,10 @@
 package org.oauthsimple.oauth;
 
+import org.oauthsimple.builder.api.DefaultApi20;
+import org.oauthsimple.model.*;
+
 import java.io.IOException;
 import java.net.Proxy;
-
-import org.oauthsimple.builder.api.DefaultApi20;
-import org.oauthsimple.model.GrantType;
-import org.oauthsimple.model.OAuthConfig;
-import org.oauthsimple.model.OAuthConstants;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Response;
-import org.oauthsimple.model.ResponseType;
-import org.oauthsimple.model.SignatureType;
-import org.oauthsimple.model.Verifier;
 
 public class OAuth20ServiceImpl implements OAuthService {
 	private static final String VERSION = "2.0";
@@ -58,10 +50,10 @@ public class OAuth20ServiceImpl implements OAuthService {
 		// 2. refresh token
 		// 3. username+password
 		if (type == GrantType.AUTHORIZATION_CODE) {
-			request.addQueryStringParameter(OAuthConstants.CODE,
+			request.addParameter(OAuthConstants.CODE,
 					verifier.getValue());
 		} else if (type == GrantType.REFRESH_TOKEN) {
-			request.addQueryStringParameter(OAuthConstants.REFRESH_TOKEN,
+			request.addParameter(OAuthConstants.REFRESH_TOKEN,
 					verifier.getValue());
 		} else if (type == GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS) {
 			String resource = verifier.getValue();
@@ -71,23 +63,23 @@ public class OAuth20ServiceImpl implements OAuthService {
 				if (credentials != null && credentials.length == 2) {
 					String userName = credentials[0];
 					String password = credentials[1];
-					request.addQueryStringParameter(OAuthConstants.USERNAME,
+					request.addParameter(OAuthConstants.USERNAME,
 							userName);
-					request.addQueryStringParameter(OAuthConstants.PASSWORD,
+					request.addParameter(OAuthConstants.PASSWORD,
 							password);
 				}
 			}
 		}
-		request.addQueryStringParameter(OAuthConstants.CLIENT_ID,
+		request.addParameter(OAuthConstants.CLIENT_ID,
 				config.getApiKey());
-		request.addQueryStringParameter(OAuthConstants.CLIENT_SECRET,
+		request.addParameter(OAuthConstants.CLIENT_SECRET,
 				config.getApiSecret());
-		request.addQueryStringParameter(OAuthConstants.REDIRECT_URI,
+		request.addParameter(OAuthConstants.REDIRECT_URI,
 				config.getCallback());
-		request.addQueryStringParameter(OAuthConstants.GRANT_TYPE, config
+		request.addParameter(OAuthConstants.GRANT_TYPE, config
 				.getGrantType().getTypeValue());
 		if (config.hasScope())
-			request.addQueryStringParameter(OAuthConstants.SCOPE,
+			request.addParameter(OAuthConstants.SCOPE,
 					config.getScope());
 
 		config.log("setting proxy to " + proxy);
@@ -139,7 +131,7 @@ public class OAuth20ServiceImpl implements OAuthService {
 								+ token.getToken());
 			case QUERY_STRING:
 				config.log("using Querystring signature");
-				request.addQueryStringParameter(OAuthConstants.ACCESS_TOKEN,
+				request.addParameter(OAuthConstants.ACCESS_TOKEN,
 						token.getToken());
 				break;
 			default:

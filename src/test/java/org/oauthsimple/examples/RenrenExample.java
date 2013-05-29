@@ -1,25 +1,15 @@
 package org.oauthsimple.examples;
 
+import org.oauthsimple.builder.ServiceBuilder;
+import org.oauthsimple.builder.api.RenrenApi;
+import org.oauthsimple.model.*;
+import org.oauthsimple.oauth.OAuthService;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
-import org.oauthsimple.builder.ServiceBuilder;
-import org.oauthsimple.builder.api.RenrenApi;
-import org.oauthsimple.model.OAuthConstants;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Response;
-import org.oauthsimple.model.Verb;
-import org.oauthsimple.model.Verifier;
-import org.oauthsimple.oauth.OAuthService;
+import java.util.*;
 
 public class RenrenExample {
 	private static final String NETWORK_NAME = "Renren";
@@ -69,7 +59,7 @@ public class RenrenExample {
 
 		List<String> sigString = new ArrayList<String>(parameters.size() + 1);
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
-			request.addQueryStringParameter(entry.getKey(), entry.getValue());
+			request.addParameter(entry.getKey(), entry.getValue());
 			sigString.add(String.format("%s=%s", entry.getKey(),
 					entry.getValue()));
 		}
@@ -82,7 +72,7 @@ public class RenrenExample {
 		}
 		b.append(apiSecret);
 		System.out.println("Sig string: " + b.toString());
-		request.addQueryStringParameter("sig", md5(b.toString()));
+		request.addParameter("sig", md5(b.toString()));
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");

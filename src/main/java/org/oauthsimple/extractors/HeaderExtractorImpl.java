@@ -1,12 +1,12 @@
 package org.oauthsimple.extractors;
 
-import java.util.List;
-
 import org.oauthsimple.exceptions.OAuthParametersMissingException;
 import org.oauthsimple.model.OAuthRequest;
 import org.oauthsimple.model.Parameter;
 import org.oauthsimple.utils.OAuthEncoder;
 import org.oauthsimple.utils.Preconditions;
+
+import java.util.List;
 
 /**
  * Default implementation of {@link HeaderExtractor}. Conforms to OAuth 1.0a
@@ -36,6 +36,7 @@ public class HeaderExtractorImpl implements HeaderExtractor {
 			header.append(String.format("%s=\"%s\"", param.getName(),
 					OAuthEncoder.encode(param.getValue())));
 		}
+
 		return header.toString();
 	}
 
