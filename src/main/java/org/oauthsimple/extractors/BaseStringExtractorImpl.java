@@ -1,8 +1,8 @@
 package org.oauthsimple.extractors;
 
 import org.oauthsimple.exceptions.OAuthParametersMissingException;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.Parameter;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Parameter;
 import org.oauthsimple.utils.OAuthEncoder;
 import org.oauthsimple.utils.Preconditions;
 import org.oauthsimple.utils.Utils;

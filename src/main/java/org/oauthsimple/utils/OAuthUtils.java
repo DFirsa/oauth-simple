@@ -7,7 +7,7 @@ import java.util.Random;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.oauthsimple.model.Parameter;
+import org.oauthsimple.http.Parameter;
 
 public final class OAuthUtils {
 	private static final String UTF8 = "UTF-8";

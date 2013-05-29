@@ -1,6 +1,6 @@
 package org.oauthsimple.utils;
 
-import org.oauthsimple.model.Parameter;
+import org.oauthsimple.http.Parameter;
 
 import java.io.Closeable;
 import java.io.IOException;

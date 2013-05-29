@@ -1,6 +1,8 @@
 package org.oauthsimple.oauth;
 
 import org.oauthsimple.builder.api.DefaultApi20;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Response;
 import org.oauthsimple.model.*;
 
 import java.io.IOException;
@@ -51,10 +53,10 @@ public class OAuth20ServiceImpl implements OAuthService {
 		// 3. username+password
 		if (type == GrantType.AUTHORIZATION_CODE) {
 			request.addParameter(OAuthConstants.CODE,
-					verifier.getValue());
+                    verifier.getValue());
 		} else if (type == GrantType.REFRESH_TOKEN) {
 			request.addParameter(OAuthConstants.REFRESH_TOKEN,
-					verifier.getValue());
+                    verifier.getValue());
 		} else if (type == GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS) {
 			String resource = verifier.getValue();
 			if (resource != null
@@ -64,23 +66,23 @@ public class OAuth20ServiceImpl implements OAuthService {
 					String userName = credentials[0];
 					String password = credentials[1];
 					request.addParameter(OAuthConstants.USERNAME,
-							userName);
+                            userName);
 					request.addParameter(OAuthConstants.PASSWORD,
-							password);
+                            password);
 				}
 			}
 		}
 		request.addParameter(OAuthConstants.CLIENT_ID,
-				config.getApiKey());
+                config.getApiKey());
 		request.addParameter(OAuthConstants.CLIENT_SECRET,
-				config.getApiSecret());
+                config.getApiSecret());
 		request.addParameter(OAuthConstants.REDIRECT_URI,
-				config.getCallback());
+                config.getCallback());
 		request.addParameter(OAuthConstants.GRANT_TYPE, config
-				.getGrantType().getTypeValue());
+                .getGrantType().getTypeValue());
 		if (config.hasScope())
 			request.addParameter(OAuthConstants.SCOPE,
-					config.getScope());
+                    config.getScope());
 
 		config.log("setting proxy to " + proxy);
 		if (proxy != null) {
@@ -132,7 +134,7 @@ public class OAuth20ServiceImpl implements OAuthService {
 			case QUERY_STRING:
 				config.log("using Querystring signature");
 				request.addParameter(OAuthConstants.ACCESS_TOKEN,
-						token.getToken());
+                        token.getToken());
 				break;
 			default:
 				break;

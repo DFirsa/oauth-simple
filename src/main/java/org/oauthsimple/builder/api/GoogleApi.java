@@ -1,7 +1,7 @@
 package org.oauthsimple.builder.api;
 
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 
 public class GoogleApi extends DefaultApi10a {
 	private static final String AUTHORIZATION_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=%s";

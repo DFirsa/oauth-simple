@@ -2,6 +2,9 @@ package org.oauthsimple.examples;
 
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.DiggApi;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Response;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.model.*;
 import org.oauthsimple.oauth.OAuthService;
 
@@ -53,7 +56,7 @@ public class DiggExample {
 		OAuthRequest request = new OAuthRequest(Verb.POST,
 				PROTECTED_RESOURCE_URL);
 		request.addParameter("comment_id",
-				"20100729223726:4fef610331ee46a3b5cbd740bf71313e");
+                "20100729223726:4fef610331ee46a3b5cbd740bf71313e");
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		System.out.println("Got it! Lets see what we found...");

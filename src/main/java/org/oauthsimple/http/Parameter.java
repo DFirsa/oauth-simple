@@ -1,4 +1,4 @@
-package org.oauthsimple.model;
+package org.oauthsimple.http;
 
 import org.oauthsimple.utils.OAuthEncoder;
 

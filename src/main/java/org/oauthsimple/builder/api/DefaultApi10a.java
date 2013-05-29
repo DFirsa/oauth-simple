@@ -9,7 +9,7 @@ import org.oauthsimple.extractors.RequestTokenExtractor;
 import org.oauthsimple.extractors.TokenExtractorImpl;
 import org.oauthsimple.model.OAuthConfig;
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.oauth.OAuth10aServiceImpl;
 import org.oauthsimple.oauth.OAuthService;
 import org.oauthsimple.services.HMACSha1SignatureService;
@@ -27,7 +27,7 @@ import org.oauthsimple.services.TimestampServiceImpl;
  * this class and define the getters for your endpoints.
  * 
  * If your Api does something a bit different, you can override the different
- * extractors or services, in order to fine-tune the process. Please read the
+ * extractors or services, in order to fine-intercept the process. Please read the
  * javadocs of the interfaces to get an idea of what to do.
  * 
  * @author Pablo Fernandez

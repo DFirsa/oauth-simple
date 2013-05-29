@@ -2,6 +2,9 @@ package org.oauthsimple.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.oauthsimple.http.Parameter;
+import org.oauthsimple.http.Request;
+import org.oauthsimple.http.Verb;
 
 import java.io.IOException;
 

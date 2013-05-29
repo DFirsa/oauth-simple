@@ -1,8 +1,8 @@
 package org.oauthsimple.test.helpers;
 
 import org.oauthsimple.model.OAuthConstants;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Verb;
 
 public class ObjectMother {
 

@@ -1,6 +1,6 @@
 package org.oauthsimple.extractors;
 
-import org.oauthsimple.model.OAuthRequest;
+import org.oauthsimple.http.OAuthRequest;
 
 /**
  * Simple command object that extracts a base string from a {@link OAuthRequest}

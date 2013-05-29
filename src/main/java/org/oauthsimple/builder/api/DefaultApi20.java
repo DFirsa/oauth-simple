@@ -3,7 +3,7 @@ package org.oauthsimple.builder.api;
 import org.oauthsimple.extractors.AccessTokenExtractor;
 import org.oauthsimple.extractors.TokenExtractor20Impl;
 import org.oauthsimple.model.OAuthConfig;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.oauth.OAuth20ServiceImpl;
 import org.oauthsimple.oauth.OAuthService;
 
@@ -17,7 +17,7 @@ import org.oauthsimple.oauth.OAuthService;
  * to extend this class and define the getters for your endpoints.
  * 
  * If your Api does something a bit different, you can override the different
- * extractors or services, in order to fine-tune the process. Please read the
+ * extractors or services, in order to fine-intercept the process. Please read the
  * javadocs of the interfaces to get an idea of what to do.
  * 
  * @author Diego Silveira

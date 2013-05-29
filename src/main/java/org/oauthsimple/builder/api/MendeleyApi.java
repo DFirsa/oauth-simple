@@ -1,7 +1,7 @@
 package org.oauthsimple.builder.api;
 
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 
 /**
  * @author Arieh "Vainolo" Bibliowicz

@@ -1,7 +1,11 @@
 package org.oauthsimple.oauth;
 
 import org.oauthsimple.builder.api.DefaultApi10a;
-import org.oauthsimple.model.*;
+import org.oauthsimple.http.*;
+import org.oauthsimple.model.OAuthConfig;
+import org.oauthsimple.model.OAuthConstants;
+import org.oauthsimple.model.OAuthToken;
+import org.oauthsimple.model.Verifier;
 import org.oauthsimple.utils.Utils;
 
 import java.io.IOException;
@@ -36,14 +40,14 @@ public class OAuth10aServiceImpl implements OAuthService {
      */
     public OAuthToken getRequestToken(int timeout, TimeUnit unit)
             throws IOException {
-        return getRequestToken(new TimeoutTuner(timeout, unit));
+        return getRequestToken(new TimeoutInterceptor(timeout, unit));
     }
 
     public OAuthToken getRequestToken() throws IOException {
         return getRequestToken(2, TimeUnit.SECONDS);
     }
 
-    public OAuthToken getRequestToken(RequestTuner tuner) throws IOException {
+    public OAuthToken getRequestToken(RequestInterceptor tuner) throws IOException {
         config.log("obtaining request token from "
                 + api.getRequestTokenEndpoint());
         OAuthRequest request = new OAuthRequest(api.getRequestTokenVerb(),
@@ -135,7 +139,7 @@ public class OAuth10aServiceImpl implements OAuthService {
 
     public OAuthToken getAccessToken(OAuthToken requestToken,
                                      Verifier verifier, int timeout, TimeUnit unit) throws IOException {
-        return getAccessToken(requestToken, verifier, new TimeoutTuner(timeout,
+        return getAccessToken(requestToken, verifier, new TimeoutInterceptor(timeout,
                 unit));
     }
 
@@ -145,7 +149,7 @@ public class OAuth10aServiceImpl implements OAuthService {
     }
 
     public OAuthToken getAccessToken(OAuthToken requestToken,
-                                     Verifier verifier, RequestTuner tuner) throws IOException {
+                                     Verifier verifier, RequestInterceptor tuner) throws IOException {
         config.log("obtaining access token from "
                 + api.getAccessTokenEndpoint());
         OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(),
@@ -216,28 +220,28 @@ public class OAuth10aServiceImpl implements OAuthService {
                 config.log("using parameter signature");
                 for (Parameter param : request.getOauthParameters()) {
                     request.addParameter(param);
-                    config.log("using parameter signature param = "+param);
+                    config.log("using parameter signature param = " + param);
                 }
                 break;
             default:
                 String oauthHeader = api.getHeaderExtractor().extract(request);
-                config.log("using Http Header signature = "+oauthHeader);
+                config.log("using Http Header signature = " + oauthHeader);
                 request.addHeader(OAuthConstants.HEADER, oauthHeader);
                 break;
         }
     }
 
-    private static class TimeoutTuner extends RequestTuner {
+    private static class TimeoutInterceptor extends RequestInterceptor {
         private final int duration;
         private final TimeUnit unit;
 
-        public TimeoutTuner(int duration, TimeUnit unit) {
+        public TimeoutInterceptor(int duration, TimeUnit unit) {
             this.duration = duration;
             this.unit = unit;
         }
 
         @Override
-        public void tune(Request request) {
+        public void intercept(Request request) {
             request.setReadTimeout(duration, unit);
         }
     }

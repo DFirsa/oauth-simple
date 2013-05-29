@@ -3,8 +3,8 @@ package org.oauthsimple.extractors;
 import org.junit.Before;
 import org.junit.Test;
 import org.oauthsimple.exceptions.OAuthParametersMissingException;
-import org.oauthsimple.model.OAuthRequest;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.test.helpers.ObjectMother;
 
 import static org.junit.Assert.assertEquals;

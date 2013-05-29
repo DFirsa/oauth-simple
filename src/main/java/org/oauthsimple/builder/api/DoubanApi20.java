@@ -3,7 +3,7 @@ package org.oauthsimple.builder.api;
 import org.oauthsimple.extractors.AccessTokenExtractor;
 import org.oauthsimple.extractors.DoubanTokenExtractor;
 import org.oauthsimple.model.OAuthConfig;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.utils.OAuthEncoder;
 
 /**

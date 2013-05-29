@@ -2,7 +2,7 @@ package org.oauthsimple.oauth;
 
 import java.io.IOException;
 
-import org.oauthsimple.model.OAuthRequest;
+import org.oauthsimple.http.OAuthRequest;
 import org.oauthsimple.model.OAuthToken;
 import org.oauthsimple.model.Verifier;
 

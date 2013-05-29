@@ -1,7 +1,7 @@
 package org.oauthsimple.builder.api;
 
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 
 public class SapoApi extends DefaultApi10a {
 	private static final String AUTHORIZE_URL = "https://id.sapo.pt/oauth/authorize?oauth_token=%s";

@@ -7,7 +7,7 @@ import org.oauthsimple.exceptions.OAuthException;
 import org.oauthsimple.extractors.AccessTokenExtractor;
 import org.oauthsimple.model.OAuthConfig;
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.utils.OAuthEncoder;
 import org.oauthsimple.utils.Preconditions;
 

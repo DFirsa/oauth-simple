@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Verb;
 
 public class OAuthRequestTest {
 

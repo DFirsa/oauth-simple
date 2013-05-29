@@ -1,10 +1,10 @@
-package org.oauthsimple.model;
+package org.oauthsimple.http;
+
+import org.oauthsimple.utils.HttpDate;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.oauthsimple.utils.HttpDate;
 
 public class Headers {
 	private Date servedDate;
@@ -20,7 +20,7 @@ public class Headers {
 	private String transferEncoding;
 	private int contentLength = -1;
 	private String contentType;
-	private List<String> cookies;
+	private List<String> rawCookies;
 	private final Map<String, List<String>> rawHeaders;
 
 	public Headers(Map<String, List<String>> rawHeaders) {
@@ -44,7 +44,7 @@ public class Headers {
 					noCache = true;
 				}
 			} else if (SET_COOKIE.equals(fieldName)) {
-				cookies = rawHeaders.get(fieldName);
+				rawCookies = rawHeaders.get(fieldName);
 			} else if ("Age".equalsIgnoreCase(fieldName)) {
 				ageSeconds = parseSeconds(value);
 			} else if (CONTENT_TYPE.equalsIgnoreCase(fieldName)) {
@@ -138,8 +138,8 @@ public class Headers {
 		return contentType;
 	}
 
-	public List<String> getCookies() {
-		return cookies;
+	public List<String> getRawCookies() {
+		return rawCookies;
 	}
 
 	public int size() {

@@ -5,10 +5,10 @@ import java.util.Scanner;
 
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.SohuWeiboApi;
-import org.oauthsimple.model.OAuthRequest;
+import org.oauthsimple.http.OAuthRequest;
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Response;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Response;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.model.Verifier;
 import org.oauthsimple.oauth.OAuthService;
 

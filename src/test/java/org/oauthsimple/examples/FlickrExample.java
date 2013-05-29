@@ -2,6 +2,9 @@ package org.oauthsimple.examples;
 
 import org.oauthsimple.builder.ServiceBuilder;
 import org.oauthsimple.builder.api.FlickrApi;
+import org.oauthsimple.http.OAuthRequest;
+import org.oauthsimple.http.Response;
+import org.oauthsimple.http.Verb;
 import org.oauthsimple.model.*;
 import org.oauthsimple.oauth.OAuthService;
 

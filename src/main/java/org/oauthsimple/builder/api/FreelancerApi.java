@@ -1,7 +1,7 @@
 package org.oauthsimple.builder.api;
 
 import org.oauthsimple.model.OAuthToken;
-import org.oauthsimple.model.Verb;
+import org.oauthsimple.http.Verb;
 
 public class FreelancerApi extends DefaultApi10a {
 	private static final String AUTHORIZATION_URL = "http://www.freelancer.com/users/api-token/auth.php?oauth_token=%s";

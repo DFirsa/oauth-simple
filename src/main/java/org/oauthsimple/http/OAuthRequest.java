@@ -1,4 +1,8 @@
-package org.oauthsimple.model;
+package org.oauthsimple.http;
+
+import org.oauthsimple.http.Parameter;
+import org.oauthsimple.http.Verb;
+import org.oauthsimple.model.OAuthConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

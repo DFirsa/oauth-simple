@@ -1,6 +1,6 @@
 package org.oauthsimple.exceptions;
 
-import org.oauthsimple.model.OAuthRequest;
+import org.oauthsimple.http.OAuthRequest;
 
 /**
  * Specialized exception that represents a missing OAuth parameter.

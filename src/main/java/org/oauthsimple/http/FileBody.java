@@ -1,4 +1,4 @@
-package org.oauthsimple.model;
+package org.oauthsimple.http;
 
 import org.oauthsimple.utils.MimeUtils;
 
@@ -10,7 +10,7 @@ import java.io.*;
  * Date: 13-5-29
  * Time: 下午1:44
  */
-public class FileBody {
+class FileBody {
     public String name;
     public String fileName;
     public String contentType;

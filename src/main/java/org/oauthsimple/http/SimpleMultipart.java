@@ -21,7 +21,7 @@
     http://blog.rafaelsanches.com/2011/01/29/upload-using-multipart-post-using-httpclient-in-android/
 */
 
-package org.oauthsimple.model;
+package org.oauthsimple.http;
 
 import java.io.*;
 import java.util.Random;

@@ -1,13 +1,11 @@
-package org.oauthsimple.model;
+package org.oauthsimple.http;
 
 import com.squareup.mimecraft.FormEncoding;
 import org.oauthsimple.exceptions.OAuthException;
 import org.oauthsimple.utils.Utils;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +41,9 @@ public class Request {
     private long connectTimeout;
     private long readTimeout;
     private Proxy proxy;
+    private CookieManager cookieManager;
+    private CookieStore cookieStore;
+    private RequestInterceptor interceptor;
 
     /**
      * Creates a new Http Request
@@ -54,14 +55,14 @@ public class Request {
         this.verb = verb;
         this.originalUrl = url;
         this.params = new ArrayList<Parameter>();
+        this.url = Utils.extractQueryString(originalUrl, this.params);
         this.bodys = new HashMap<String, FileBody>();
         this.headers = new HashMap<String, String>();
         this.charset = ENCODING_DEFAULT;
         this.keepAlive = false;
         this.connectTimeout = CONNECT_TIMEOUT;
         this.readTimeout = READ_TIMEOUT;
-        this.proxy = null;
-        this.url = Utils.extractQueryString(originalUrl, this.params);
+        this.proxy = Proxy.NO_PROXY;
     }
 
     /**
@@ -81,12 +82,12 @@ public class Request {
         if (connection == null) {
             System.setProperty("http.keepAlive", keepAlive ? "true"
                     : "false");
-            if (proxy != null) {
-                connection = (HttpURLConnection) new URL(completeUrl)
-                        .openConnection(proxy);
-            } else {
+            if (proxy == null || proxy == Proxy.NO_PROXY) {
                 connection = (HttpURLConnection) new URL(completeUrl)
                         .openConnection();
+            } else {
+                connection = (HttpURLConnection) new URL(completeUrl)
+                        .openConnection(proxy);
             }
         }
     }
@@ -106,6 +107,7 @@ public class Request {
     }
 
     private Response doSend() throws IOException {
+        CookieHandler.setDefault(cookieManager);
         connection.setRequestMethod(this.verb.name());
         connection.setDoInput(true);
         connection.setUseCaches(false);
@@ -120,12 +122,20 @@ public class Request {
             connection.setDoOutput(false);
         }
 
+        intercept();
+
         System.out.println("doSend() verb=" + verb);
         System.out.println("doSend() originalUrl=" + originalUrl);
         System.out.println("doSend() url=" + url);
         System.out.println("doSend() params=" + params);
 
         return new Response(connection);
+    }
+
+    private void intercept() {
+        if (interceptor != null) {
+            interceptor.intercept(this);
+        }
     }
 
     private void addHeaders(HttpURLConnection conn) {
@@ -195,6 +205,19 @@ public class Request {
         this.bodys.put(key, fileBody);
     }
 
+    public void addBody(String key, File file, String contentType) throws FileNotFoundException {
+        FileBody fileBody = new FileBody(key, file, contentType);
+        this.bodys.put(key, fileBody);
+    }
+
+    public void addBody(String name, String fileName, String contentType, byte[] bytes) {
+        FileBody body = new FileBody(name, fileName, contentType, new ByteArrayInputStream(bytes));
+    }
+
+    public void add(String name, String fileName, String contentType, InputStream is) {
+        FileBody body = new FileBody(name, fileName, contentType, is);
+    }
+
     public void addParameter(String key, String value) {
         this.params.add(new Parameter(key, value));
     }
@@ -251,15 +274,7 @@ public class Request {
      * @throws OAuthException if the charset chosen is not supported
      */
     public String getBodyContents() {
-        try {
-            return new String(getByteBodyContents(), getCharset());
-        } catch (UnsupportedEncodingException uee) {
-            throw new RuntimeException("Unsupported Charset: " + charset, uee);
-        }
-    }
-
-    byte[] getByteBodyContents() {
-        return new byte[4096];
+        return Utils.asFormUrlEncodedString(params);
     }
 
     /**
@@ -329,12 +344,22 @@ public class Request {
     /*
      * We need this in order to stub the connection object for test cases
      */
-    void setConnection(HttpURLConnection connection) {
+    public void setConnection(HttpURLConnection connection) {
         this.connection = connection;
     }
 
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
+    }
+
+    public void setCookieStore(CookieStore cookieStore) {
+        this.cookieStore = cookieStore;
+        this.cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+        CookieHandler.setDefault(cookieManager);
+    }
+
+    public void setInterceptor(RequestInterceptor interceptor) {
+        this.interceptor = interceptor;
     }
 
     @Override

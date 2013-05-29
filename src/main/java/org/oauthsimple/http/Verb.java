@@ -1,4 +1,4 @@
-package org.oauthsimple.model;
+package org.oauthsimple.http;
 
 /**
  * An enumeration containing the most common HTTP Verbs.
