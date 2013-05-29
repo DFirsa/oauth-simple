@@ -200,22 +200,32 @@ public class Request {
         this.headers.put(key, value);
     }
 
-    public void addBody(String key, File file) throws FileNotFoundException {
-        FileBody fileBody = new FileBody(key, file);
+    public void addBody(String key, File file) {
+        try {
+            FileBody fileBody = new FileBody(file);
+            this.bodys.put(key, fileBody);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addBody(String key, File file, String contentType) {
+        try {
+            FileBody fileBody = new FileBody(file, contentType);
+            this.bodys.put(key, fileBody);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addBody(String key, String fileName, String contentType, byte[] bytes) {
+        FileBody fileBody = new FileBody(fileName, contentType, new ByteArrayInputStream(bytes));
         this.bodys.put(key, fileBody);
     }
 
-    public void addBody(String key, File file, String contentType) throws FileNotFoundException {
-        FileBody fileBody = new FileBody(key, file, contentType);
+    public void add(String key, String fileName, String contentType, InputStream is) {
+        FileBody fileBody = new FileBody(fileName, contentType, is);
         this.bodys.put(key, fileBody);
-    }
-
-    public void addBody(String name, String fileName, String contentType, byte[] bytes) {
-        FileBody body = new FileBody(name, fileName, contentType, new ByteArrayInputStream(bytes));
-    }
-
-    public void add(String name, String fileName, String contentType, InputStream is) {
-        FileBody body = new FileBody(name, fileName, contentType, is);
     }
 
     public void addParameter(String key, String value) {
