@@ -70,8 +70,8 @@ public final class Utils {
             e.printStackTrace();
         }
 
-        System.out.println("url is " + url);
-        System.out.println("clean url is " + cleanUrl);
+//        System.out.println("url is " + url);
+//        System.out.println("clean url is " + cleanUrl);
         return cleanUrl;
     }
 

@@ -78,7 +78,7 @@ public class Request {
 
     private void createConnection() throws IOException {
         String completeUrl = getCompleteUrl();
-        System.out.println("complete url is " + completeUrl);
+//        System.out.println("complete url is " + completeUrl);
         if (connection == null) {
             System.setProperty("http.keepAlive", keepAlive ? "true"
                     : "false");
@@ -124,10 +124,10 @@ public class Request {
 
         intercept();
 
-        System.out.println("doSend() verb=" + verb);
-        System.out.println("doSend() originalUrl=" + originalUrl);
-        System.out.println("doSend() url=" + url);
-        System.out.println("doSend() params=" + params);
+//        System.out.println("doSend() verb=" + verb);
+//        System.out.println("doSend() originalUrl=" + originalUrl);
+//        System.out.println("doSend() url=" + url);
+//        System.out.println("doSend() params=" + params);
 
         return new Response(connection);
     }
@@ -157,7 +157,7 @@ public class Request {
         for (String key : bodys.keySet()) {
             FileBody fileBody = bodys.get(key);
             multipart.addPart(key, fileBody.fileName, fileBody.inputStream, fileBody.contentType);
-            System.out.println("name=" + key + " fileBody=" + fileBody);
+//            System.out.println("name=" + key + " fileBody=" + fileBody);
         }
         for (Parameter param : params) {
             multipart.addPart(param.getName(), param.getValue());
